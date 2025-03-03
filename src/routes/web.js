@@ -7,6 +7,8 @@ let initWebRoute = (app) => {
         return res.send('hello world!')
     })
     router.get('/test', userController.handleRes)
+
+    router.post('/api/v1/login', userController.handleLogin)
     return app.use('/', router);
 }
 module.exports = initWebRoute;
