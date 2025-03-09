@@ -9,7 +9,7 @@ let connectDbTest = async () => {
             let res = await db.User.findAll({
                 raw: true
             })
-            let hashPassword = await handleHashPassword('alex nguyen')
+
             console.log('check hash password1212', hashPassword)
             if (res) {
                 resolve({
@@ -146,7 +146,117 @@ let compareUserPassword = (password) => {
         }
     })
 }
+//crud user 
+let handleCreateUserService = (data) => {
+    return new Promise(async (resolve, reject) => {
+
+        try {
+
+
+            if (data) {
+
+                let hashPassword = await handleHashPassword(data.password)
+                let finUser = await db.User.findOne({
+
+                    where: { email: data.email },
+
+                })
+                if (finUser) {
+                    resolve({
+                        EC: -1,
+                        EM: 'This user has been existing in the system!',
+                    })
+                } else {
+                    let user = await db.User.create({
+                        firstName: data.firstName,
+                        lastName: data.lastName,
+                        email: data.email,
+                        password: hashPassword,
+                        address: data.address,
+                        gender: data.gender,
+                        roleId: data.roleId,
+                        phoneMumber: data.phoneMumber,
+                        positionId: data.positionId,
+                        image: data.image
+
+                    })
+                    if (user) {
+                        resolve({
+                            EC: 0,
+                            EM: `Create User : ${data.email} successfully! >.<`
+                        })
+                    } else {
+                        resolve({
+                            EC: -1,
+                            EM: 'Error From server!'
+                        })
+                    }
+                }
+
+
+
+            } else {
+                resolve({
+                    EC: -1,
+                    EM: 'KHÔNG CHUYỀN DATA À NÍ ƠI @@'
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    });
+}
+let handleGetAllUserService = () => {
+    return new Promise(async (resolve, reject) => {
+
+        try {
+            let res = await db.User.findAll({
+                raw: true,
+                attributes: {
+                    exclude: ['password', 'image']
+                }
+            });
+            if (res) {
+                resolve({
+                    EC: 0,
+                    EM: "Get all user success!",
+                    DT: res
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    });
+};
+let handleDeleteUserService = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!id) {
+                resolve({
+                    EC: -1,
+                    EM: 'Missing parameter Id',
+                    res: {}
+                })
+            } else {
+                let res = await db.User.destroy({
+                    where: {
+                        id: id
+                    }
+                });
+                resolve({
+                    EC: 0,
+                    EM: "Delete successfully!"
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+
+    });
+};
 module.exports = {
 
-    connectDbTest, handleLoginService
+    connectDbTest, handleLoginService,
+    handleCreateUserService, handleGetAllUserService,
+    handleDeleteUserService
 }

@@ -11,6 +11,7 @@ let handleRes = async (req, res) => {
 };
 let handleLogin = async (req, res) => {
     let dataInput = req.body
+    console.log('check data login ', res.body)
     try {
 
 
@@ -35,7 +36,70 @@ let handleLogin = async (req, res) => {
     }
 
 }
+//crud user
+let handleCreateUser = async (req, res) => {
+    try {
+
+
+        let data = req.body;
+        if (!data.email || !data.password) {
+            return res.status(404).json({
+                EC: -1,
+                EM: "Missing parameters"
+            })
+        }
+        else {
+            let user = await userService.handleCreateUserService(data)
+            return res.status(200).json({
+                user
+
+
+            })
+
+
+
+        }
+
+
+    } catch (error) {
+        console.log(error)
+    }
+};
+let handleGetAllUsers = async (req, res) => {
+    try {
+        let data = await userService.handleGetAllUserService()
+        return res.status(200).json(
+            data
+        )
+    } catch (error) {
+        console.log(error)
+    }
+
+};
+let handleDeleteUser = async (req, res) => {
+
+    try {
+
+        let id = req.body.id;
+        if (!id) {
+            res.status(200).json({
+                EC: 1,
+                EM: 'Missing parameter Id!'
+            })
+        } else {
+            let data = await userService.handleDeleteUserService(id);
+            return res.status(200).json(data);
+
+
+        }
+    } catch (error) {
+        console.log(error)
+    }
+};
+
 
 module.exports = {
-    handleRes, handleLogin
+    handleRes, handleLogin,
+    handleCreateUser, handleGetAllUsers,
+    handleDeleteUser
 }
