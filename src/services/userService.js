@@ -1,4 +1,4 @@
-import { raw } from 'body-parser';
+import { json, raw } from 'body-parser';
 import db from '../models/index';
 import bcrypt from "bcryptjs";
 import { where } from 'sequelize';
@@ -65,12 +65,13 @@ let handleCheckEmail = (email) => {
     });
 
 };
-let handleLoginService = (email, password) => {
+let handleLoginService = (email, password, delay) => {
 
     return new Promise(async (resolve, reject) => {
         try {
 
             if (email) {
+
 
                 let isExist = await handleCheckEmail(email)
                 //user already exist
@@ -91,22 +92,26 @@ let handleLoginService = (email, password) => {
                         let check = await bcrypt.compareSync(password, user.password);
 
                         delete user.password
+                        setTimeout(() => {
+                            if (check) {
+                                resolve({
+                                    DT: user,
+                                    EC: 0,
+                                    EM: 'Login successful!'
 
-                        if (check) {
-                            resolve({
-                                DT: user,
-                                EC: 0,
-                                EM: 'Login successful!'
+                                })
 
-                            })
-                        } else {
-                            resolve({
-                                DT: {},
-                                EC: 0,
-                                EM: 'Wrong password!'
+                            } else {
+                                resolve({
+                                    DT: {},
+                                    EC: 1,
+                                    EM: 'Wrong password!'
 
-                            })
-                        }
+                                })
+                            }
+
+                        }, delay ? delay : 3000)
+
                     } else {
                         resolve({
                             EC: -1,
@@ -174,8 +179,8 @@ let handleCreateUserService = (data) => {
                         password: hashPassword,
                         address: data.address,
                         gender: data.gender,
-                        roleId: data.roleId,
-                        phoneMumber: data.phoneMumber,
+                        roleId: data.role,
+                        phoneNumber: data.phoneNumber,
                         positionId: data.positionId,
                         image: data.image
 
@@ -213,9 +218,18 @@ let handleGetAllUserService = () => {
             let res = await db.User.findAll({
                 raw: true,
                 attributes: {
-                    exclude: ['password', 'image']
+                    exclude: ['password']
                 }
             });
+            if (res && res.length > 0) {
+                res.map(item => {
+                    item.image = new Buffer.from(item.image, 'base64').toString('binary')
+                    return item;
+
+                })
+
+
+            }
             if (res) {
                 resolve({
                     EC: 0,

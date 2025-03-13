@@ -11,7 +11,6 @@ let handleRes = async (req, res) => {
 };
 let handleLogin = async (req, res) => {
     let dataInput = req.body
-    console.log('check data login ', res.body)
     try {
 
 
@@ -23,12 +22,12 @@ let handleLogin = async (req, res) => {
             })
         }
 
-        let data = await userService.handleLoginService(dataInput.email, dataInput.password)
-        return res.status(200).json({
+        let data = await userService.handleLoginService(dataInput.email, dataInput.password, dataInput.delay)
+        return res.status(200).json(
             data
 
 
-        })
+        )
 
 
     } catch (error) {
