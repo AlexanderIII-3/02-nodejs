@@ -97,8 +97,44 @@ let handleDeleteUser = async (req, res) => {
 };
 
 
+
+
+
+let handleGetAllCode = async (req, res) => {
+
+    try {
+        let type = req.query.type
+        if (!type) {
+            return res.status(404).json({
+                EM: 'Missing parameter',
+                EC: -1
+            })
+        }
+        else {
+            let data = await userService.handleGetAllCodeServices(type)
+            if (data) {
+                return res.status(200).json(data)
+            } else {
+                data = {}
+                return res.status(200).json(data)
+
+            }
+        }
+
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(404).json({
+            EM: 'Error from server',
+            EC: -1
+        })
+    }
+};
+
 module.exports = {
     handleRes, handleLogin,
     handleCreateUser, handleGetAllUsers,
-    handleDeleteUser
+    handleDeleteUser, handleGetAllCode,
+
 }

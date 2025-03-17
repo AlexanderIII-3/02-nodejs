@@ -181,7 +181,7 @@ let handleCreateUserService = (data) => {
                         gender: data.gender,
                         roleId: data.role,
                         phoneNumber: data.phoneNumber,
-                        positionId: data.positionId,
+                        positionId: data.position,
                         image: data.image
 
                     })
@@ -268,9 +268,43 @@ let handleDeleteUserService = (id) => {
 
     });
 };
+
+
+
+
+//allcode
+
+let handleGetAllCodeServices = (type) => {
+    return new Promise(async (resolve, reject) => {
+
+        try {
+            let res = await db.Allcode.findAll({
+
+                where: { type: type }
+            })
+            if (!res) {
+                res = {}
+                resolve({
+                    EM: 'Not Found All Code ',
+                    EC: 0,
+                    DT: res
+                })
+            }
+            else {
+                resolve({
+                    EM: 'Fetch All Code Success',
+                    EC: 0,
+                    DT: res
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    });
+};
 module.exports = {
 
     connectDbTest, handleLoginService,
     handleCreateUserService, handleGetAllUserService,
-    handleDeleteUserService
+    handleDeleteUserService, handleGetAllCodeServices
 }
