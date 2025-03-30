@@ -6,12 +6,15 @@ import dotenv from "dotenv";
 import connectDB from './config/connectDB';
 
 const app = express();
-var cors = require('cors')
 
-app.use(cors({ credentials: true, origin: true }));
-
+const cors = require("cors");
+app.use(cors());
+app.use(express.json());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
+
+
 
 viewEngine(app);
 initWebRoute(app);

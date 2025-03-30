@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --exec babel-node src/server.js",
+    "start": "npx nodemon --exec npx babel-node src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,7 +15,6 @@
   "license": "ISC",
   "dependencies": {
     "@babel/core": "^7.12.10",
-    "@babel/node": "^7.12.10",
     "@babel/preset-env": "^7.12.10",
     "bcryptjs": "^3.0.2",
     "body-parser": "^1.19.0",
@@ -28,6 +27,7 @@
     "sequelize": "^6.6.2"
   },
   "devDependencies": {
+    "@babel/node": "^7.26.0",
     "sequelize-cli": "^6.2.0"
   }
 }
