@@ -8,8 +8,11 @@ import connectDB from './config/connectDB';
 const app = express();
 var cors = require('cors')
 
-app.use(cors({ credentials: true, origin: true }));
-
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 

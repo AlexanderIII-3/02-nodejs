@@ -302,9 +302,12 @@ let handleGetAllCodeServices = (type) => {
         }
     });
 };
+
+
 module.exports = {
 
     connectDbTest, handleLoginService,
     handleCreateUserService, handleGetAllUserService,
-    handleDeleteUserService, handleGetAllCodeServices
+    handleDeleteUserService, handleGetAllCodeServices,
+
 }

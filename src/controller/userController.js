@@ -132,9 +132,11 @@ let handleGetAllCode = async (req, res) => {
     }
 };
 
+
 module.exports = {
     handleRes, handleLogin,
     handleCreateUser, handleGetAllUsers,
     handleDeleteUser, handleGetAllCode,
+
 
 }
