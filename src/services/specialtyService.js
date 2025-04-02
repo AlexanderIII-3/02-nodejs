@@ -17,7 +17,7 @@ let postSpecialtySaveInforService = (dataInput) => {
                 || !dataInput.descriptionMarkDown
                 || !dataInput.descriptionHtml
                 || !dataInput.image
-                || !dataInput.action
+
             ) {
                 resolve({
                     EC: 1,
@@ -25,7 +25,17 @@ let postSpecialtySaveInforService = (dataInput) => {
                 })
             }
             else {
-                if (dataInput.action === "CREATE") {
+                let findExist = await db.Specialty.findOne({
+                    where: { name: dataInput.name }
+                })
+                if (findExist) {
+                    resolve({
+                        EC: 1,
+                        EM: "This Specilaty current is exist in the system!",
+
+
+                    })
+                } else {
                     let res = await db.Specialty.create({
                         name: dataInput.name,
                         image: dataInput.image,
@@ -33,30 +43,33 @@ let postSpecialtySaveInforService = (dataInput) => {
                         descriptionMarkDown: dataInput.descriptionMarkDown
 
                     })
+                    resolve({
+                        EC: 0,
+                        EM: "Create specialty success!",
 
+
+                    })
                 }
-                if (dataInput.action === "EDIT") {
-                    let res = await db.Specialty.findOne({
-                        where: { id: dataInput.id },
-                        raw: false
-                    });
-                    if (res) {
-
-                        res.descriptionHtml = dataInput.descriptionHtml;
-                        res.descriptionMarkDown = dataInput.descriptionMarkDown;
-                        res.name = dataInput.name;
-                        res.image = dataInput.image;
-                        await res.save()
 
 
-                    }
-                }
-                resolve({
-                    EC: 0,
-                    EM: "O ke!",
+
+                // if (dataInput.action === "EDIT") {
+                //     let res = await db.Specialty.findOne({
+                //         where: { id: dataInput.id },
+                //         raw: false
+                //     });
+                //     if (res) {
+
+                //         res.descriptionHtml = dataInput.descriptionHtml;
+                //         res.descriptionMarkDown = dataInput.descriptionMarkDown;
+                //         res.name = dataInput.name;
+                //         res.image = dataInput.image;
+                //         await res.save()
 
 
-                })
+                //     }
+                // }
+
 
 
 

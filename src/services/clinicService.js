@@ -180,7 +180,55 @@ let getDetailClinicByIdService = (dataId) => {
 
     });
 };
+let handleUpdateClinicService = async (data) => {
+    return new Promise(async (resolve, reject) => {
+
+        try {
+            if (!data.id || !data.image || !data.address) {
+                resolve({
+                    EC: 1,
+                    EM: "Missing required parameter!"
+                })
+            }
+            else {
+
+
+                let res = await db.Clinic.findOne({
+                    where: { id: data.id }
+
+
+
+                })
+                if (res) {
+                    res.name = data.name;
+                    res.address = data.address;
+                    res.image = data.image;
+                    res.descriptionHtml = data.descriptionHtml
+                    res.descriptionMarkDown = data.descriptionMarkDown
+
+                    await res.save()
+
+                }
+                resolve({
+                    EC: 0,
+                    EM: "Update success!"
+                })
+
+
+
+            }
+        } catch (error) {
+            console.log('check error from service: ', error)
+            reject(error);
+        }
+
+
+
+
+    });
+}
 module.exports = {
     handleCreateNewClinicService, getAllClinicService,
-    handleDeleteClinicService, getDetailClinicByIdService
+    handleDeleteClinicService, getDetailClinicByIdService,
+    handleUpdateClinicService
 }
