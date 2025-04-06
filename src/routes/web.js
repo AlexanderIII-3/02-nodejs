@@ -20,19 +20,22 @@ let initWebRoute = (app) => {
 
 
     router.get('/api/v1/fetch/allcode', userController.handleGetAllCode)
-    router.get('/api/v1/getAllDoctors', doctorController.handleGetAllDoctor);
 
 
-    // router.post('/api/v1/save-infor-doctor', doctorController.postInforDoctor);
-    // router.get('/api/v1/detail-user', doctorController.getDetailDoctor)
-    // router.get('/api/v1/get-details-doctor', doctorController.getDetailsDoctorById);
+    router.get('/api/v1/getAllDoctors', doctorController.getTopDoctorHome);
+
+
+    router.post('/api/v1/save-infor-doctor', doctorController.postInforDoctor);
+    router.get('/api/v1/detail-user', doctorController.getDetailDoctor)
+    router.get('/api/v1/get-details-doctor', doctorController.getDetailsDoctorById);
     // router.get('/api/v1/get-more-infor-doctor', doctorController.getMoreInforDoctor)
     // router.get('/api/v1/get-profile-infor-doctor', doctorController.getProfileInforDoctor)
 
 
     router.post('/api/v1/specialty-save-infor', specialtyController.postSpecialtySaveInfor)
-    // router.get('/api/v1/fetch-specialty-infor', specialtyController.getAllSpecialty)
-    // router.post('/api/v1/handle-delete-specialty', specialtyController.handleDeleteSpecialty);
+    router.get('/api/v1/fetch-specialty-infor', specialtyController.getAllSpecialty)
+    router.post('/api/v1/handle-delete-specialty', specialtyController.handleDeleteSpecialty);
+    router.post('/api/v1/handle-update-specialty', specialtyController.handleUpdateSpecialty)
     // router.get('/api/v1/get-detail-specialty-by-id', specialtyController.getDetailSpecialtyById);
 
     router.post('/api/v1/create-new-clinic', clinicController.handleCreateNewClinic);

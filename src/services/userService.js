@@ -280,23 +280,22 @@ let handleGetAllCodeServices = (type) => {
         try {
             let res = await db.Allcode.findAll({
 
-                where: { type: type }
+                where: { type: type },
+                attributes: {
+                    exclude: ["createdAt", "updatedAt"],
+                },
             })
-            if (!res) {
-                res = {}
-                resolve({
-                    EM: 'Not Found All Code ',
-                    EC: 0,
-                    DT: res
-                })
-            }
-            else {
-                resolve({
-                    EM: 'Fetch All Code Success',
-                    EC: 0,
-                    DT: res
-                })
-            }
+
+
+            resolve({
+                EM: 'Fetch All Code Success',
+                EC: 0,
+                DT: res
+            })
+
+
+
+
         } catch (error) {
             reject(error)
         }

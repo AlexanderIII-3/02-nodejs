@@ -112,13 +112,9 @@ let handleGetAllCode = async (req, res) => {
         }
         else {
             let data = await userService.handleGetAllCodeServices(type)
-            if (data) {
-                return res.status(200).json(data)
-            } else {
-                data = {}
-                return res.status(200).json(data)
 
-            }
+            return res.status(200).json(data)
+
         }
 
 

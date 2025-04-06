@@ -108,7 +108,7 @@ let getAllSpecialtyService = () => {
             resolve({
                 EC: 0,
                 EM: "O ke!",
-                data: res
+                DT: res
             })
         } catch (error) {
             reject(error);
@@ -200,7 +200,7 @@ let getDetailSpecialtyByIdService = (dataId, location) => {
                 resolve({
                     EC: 0,
                     EM: "O ke!",
-                    data: data
+                    DT: data
 
                 })
 
@@ -213,7 +213,56 @@ let getDetailSpecialtyByIdService = (dataId, location) => {
         }
     });
 };
+let handleUpdateSpecialtyService = (data) => {
+
+    return new Promise(async (resolve, reject) => {
+
+        try {
+            if (!data.id || !data.image) {
+                resolve({
+                    EC: 1,
+                    EM: "Missing required parameter!"
+                })
+            }
+            else {
+
+
+                let res = await db.Specialty.findOne({
+                    where: { id: data.id }
+
+
+
+                })
+                if (res) {
+                    res.name = data.name;
+
+                    res.image = data.image;
+                    res.descriptionHtml = data.descriptionHtml
+                    res.descriptionMarkDown = data.descriptionMarkDown
+
+                    await res.save()
+
+                }
+                resolve({
+                    EC: 0,
+                    EM: "Update success!"
+                })
+
+
+
+            }
+        } catch (error) {
+            console.log('check error from service: ', error)
+            reject(error);
+        }
+
+
+
+
+    });
+}
 module.exports = {
     postSpecialtySaveInforService, getAllSpecialtyService,
-    handleDeleteSpecialtyService, getDetailSpecialtyByIdService
+    handleDeleteSpecialtyService, getDetailSpecialtyByIdService,
+    handleUpdateSpecialtyService
 }

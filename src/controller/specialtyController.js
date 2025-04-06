@@ -26,7 +26,7 @@ let getAllSpecialty = async (req, res) => {
 }
 let handleDeleteSpecialty = async (req, res) => {
     try {
-        let data = await specialtyService.handleDeleteSpecialtyService(req.query.id);
+        let data = await specialtyService.handleDeleteSpecialtyService(req.body.id);
         return res.status(200).json(data)
     } catch (error) {
         return res.status(200).json({
@@ -49,8 +49,24 @@ let getDetailSpecialtyById = async (req, res) => {
 
     }
 };
+let handleUpdateSpecialty = async (req, res) => {
+    try {
+        let data = await specialtyService.handleUpdateSpecialtyService(req.body);
+        return res.status(200).json(data)
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            EC: 1,
+            EM: 'Error From Server!'
+        })
+
+    }
+
+
+}
 module.exports = {
     postSpecialtySaveInfor,
     getAllSpecialty,
-    handleDeleteSpecialty, getDetailSpecialtyById
+    handleDeleteSpecialty, getDetailSpecialtyById,
+    handleUpdateSpecialty
 }
