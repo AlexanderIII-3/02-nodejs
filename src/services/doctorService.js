@@ -25,6 +25,15 @@ let getTopDoctorHome = (limit) => {
                 raw: true,
                 nest: true,
             })
+            if (users && users.length > 0) {
+                users.map(item => {
+                    item.image = new Buffer.from(item.image, 'base64').toString('binary')
+                    return item;
+
+                })
+
+
+            }
             if (users) {
                 resolve({
                     EC: 0,
