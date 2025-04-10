@@ -43,6 +43,9 @@ let initWebRoute = (app) => {
     router.post('/api/v1/delete-clinic', clinicController.handleDeleteClinic);
     router.get('/api/v1/get-detail-clinic-by-id', clinicController.getDetailClinicById)
     router.post('/api/v1/update-clinic', clinicController.handleUpdateClinic)
+
+    router.post('/api/bulk-create-schedule', doctorController.bulkCreateSchedule)
+
     return app.use('/', router);
 }
 module.exports = initWebRoute;

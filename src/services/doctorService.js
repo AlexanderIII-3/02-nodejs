@@ -4,9 +4,11 @@ import db from '../models/index';
 // import { where } from "sequelize";
 // import db from "../models";
 // require('dotenv').config();
+const dotenv = require('dotenv')
+
 import _, { includes } from "lodash";
 // import emailService from './emailService'
-// const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
+const MAX_NUMBER_SCHEDULE = 10
 let getTopDoctorHome = (limit) => {
     return new Promise(async (resolve, reject) => {
         try {
