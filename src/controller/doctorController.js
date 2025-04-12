@@ -89,6 +89,13 @@ let bulkCreateSchedule = async (req, res) => {
 }
 let getScheduleByDate = async (req, res) => {
     try {
+        if (!req.query.doctorId || !req.query.date) {
+            return res.status(200).json({
+                EC: -1,
+                EM: 'Missing parameter!'
+            })
+
+        }
         let infor = await doctorService.getScheduleByDateService(req.query.doctorId, req.query.date);
         return res.status(200).json(infor)
     } catch (error) {

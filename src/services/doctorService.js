@@ -352,7 +352,7 @@ let getScheduleByDateService = (doctorId, date) => {
             resolve({
                 EC: 0,
                 EM: 'O ke!',
-                data: data
+                DT: data
             })
         }
     })
@@ -400,7 +400,7 @@ let getMoreInforDoctorService = (doctorId) => {
                 resolve({
                     EC: 0,
                     EM: 'O ke!',
-                    data: res
+                    DT: res
                 })
             }
 
