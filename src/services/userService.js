@@ -80,7 +80,7 @@ let handleLoginService = (email, password, delay) => {
                     let user = await db.User.findOne({
                         where: { email: email },
                         raw: true,
-                        attributes: ['id', 'email', 'roleId', 'password', 'firstName', 'lastName'],
+                        attributes: ['id', 'email', 'roleId', 'password', 'firstName', 'lastName', 'phoneNumber'],
 
 
                     }
