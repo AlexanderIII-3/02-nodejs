@@ -544,7 +544,7 @@ let sendingRemedyService = (dataInput) => {
                     await appointment.save()
                 }
                 //sending remedy
-                await emailService.sendAttachment(dataInput);
+                // await emailService.sendAttachment(dataInput);
                 resolve({
                     EC: 0,
                     EM: "Ô KÊ!",

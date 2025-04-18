@@ -1,7 +1,7 @@
 import db from "../models";
 import { v4 as uuidv4 } from 'uuid';
 
-// import emailService from './emailService';
+import emailService from './emailService';
 
 // require('dotenv').config();
 let buidUrlEmail = (doctorId, token) => {
@@ -15,8 +15,10 @@ let postBookingAppointmentService = (dataInput) => {
                 || !dataInput.patientName
                 || !dataInput.addressDetail
                 || !dataInput.gender
+                || !dataInput.dateBooking
 
             ) {
+                console.log('check data sending', dataInput)
 
                 resolve({
                     EC: 1,
@@ -26,14 +28,13 @@ let postBookingAppointmentService = (dataInput) => {
             else {
                 let token = uuidv4();
 
-                // await emailService.sendSimpleEmail({
-                //     receiverEmail: dataInput.email,
-                //     patientName: dataInput.fullName,
-                //     time: dataInput.timeString,
-                //     doctorName: dataInput.doctorName,
-                //     language: dataInput.language,
-                //     redirecLink: buidUrlEmail(dataInput.doctorId, token)
-                // })
+                await emailService.sendSimpleEmail({
+                    receiverEmail: dataInput.email,
+                    patientName: dataInput.patientName,
+                    time: dataInput.timeString,
+                    doctorName: dataInput.doctorName,
+                    redirecLink: buidUrlEmail(dataInput.doctorId, token)
+                })
 
                 //upsert patient
                 let user = await db.User.findOrCreate({
