@@ -503,7 +503,7 @@ let getListPatientForDoctorService = (doctorId, date) => {
                 resolve({
                     EC: 0,
                     EM: "Ô KÊ!",
-                    data: data
+                    DT: data
                 })
             }
 

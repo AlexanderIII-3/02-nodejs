@@ -3,7 +3,6 @@ const dotenv = require('dotenv');
 dotenv.config();
 import nodemailer from "nodemailer"
 let sendSimpleEmail = async (dataSend) => {
-
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
@@ -24,6 +23,7 @@ let sendSimpleEmail = async (dataSend) => {
 
 };
 let getBodyHTMLEmail = (dataSend) => {
+    let link = dataSend.redirecLink;
     let result = '';
 
     result = `
@@ -33,7 +33,7 @@ let getBodyHTMLEmail = (dataSend) => {
     <div><b>Thời Gian: ${dataSend.time}</b></div>
      Nếu những thông tin này chính xác, vui lòng xác nhận và hoàn tất cuộc hẹn khám bệnh của bạn với bác sĩ.</p>
     <div>
-    <a href=${dataSend.redirecLink} target="_blank" >Nhấp vào đây để xác nhận</a>
+    <a href=${link} target="_blank"  >Nhấp vào đây để xác nhận</a>
 
     </div>
     <div>Xin Chân Thành Cảm Ơn!</div>
