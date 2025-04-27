@@ -54,7 +54,7 @@ let sendAttachment = async (dataSend) => {
     });
 
     let info = await transporter.sendMail({
-        from: '"Alex Xander 👻" <duachutthoid@gmail.com>', // sender address
+        from: '"Bookingcare 👻" <thanhkun267@gmail.com>', // sender address
         to: dataSend.email, // list of receivers
         subject: "Kết Quả  Lịch Khám bệnh ✔", // Subject line
         text: "Konichiwa?", // plain text body
@@ -71,8 +71,8 @@ let sendAttachment = async (dataSend) => {
 };
 let getBodyHTMLEmailRemedy = (data) => {
     let result = '';
-    if (data.language === 'vi') {
-        result = `
+
+    result = `
     <h3>Xin Chào  ${data.patientName} !</h3>
     <p>Nếu bạn nhận được email này sau khi bạn đặt lịch hẹn với bác sĩ! Trên trang web AlexSanDer đẹp trai  </p>
     <p>Thông tin đơn thuốc đã được gửi trong file đính kèm</p>
@@ -80,16 +80,7 @@ let getBodyHTMLEmailRemedy = (data) => {
     <div>Xin Chân Thành Cảm Ơn!</div>
     
     `
-    } if (data.language === 'en') {
-        result = `
-    <h3>Dear Name!</h3>
-    <p>If you taked this mail after you  to take an appointment to the doctor! On Website AlexSanDer handsome  </p>
-    <p>hohoho</p>
-    
-    <div>Thank for alls</div>
-    
-    `
-    }
+
     return result;
 }
 

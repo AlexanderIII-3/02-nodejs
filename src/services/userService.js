@@ -65,7 +65,7 @@ let handleCheckEmail = (email) => {
     });
 
 };
-let handleLoginService = (email, password, delay) => {
+let handleLoginService = (email, password) => {
 
     return new Promise(async (resolve, reject) => {
         try {
@@ -80,7 +80,7 @@ let handleLoginService = (email, password, delay) => {
                     let user = await db.User.findOne({
                         where: { email: email },
                         raw: true,
-                        attributes: ['id', 'email', 'roleId', 'password', 'firstName', 'lastName', 'phoneNumber'],
+                        attributes: ['id', 'email', 'roleId', 'password', 'firstName', 'lastName', 'phoneNumber', 'address'],
 
 
                     }
@@ -92,25 +92,25 @@ let handleLoginService = (email, password, delay) => {
                         let check = await bcrypt.compareSync(password, user.password);
 
                         delete user.password
-                        setTimeout(() => {
-                            if (check) {
-                                resolve({
-                                    DT: user,
-                                    EC: 0,
-                                    EM: 'Login successful!'
 
-                                })
+                        if (check) {
+                            resolve({
+                                DT: user,
+                                EC: 0,
+                                EM: 'Login successful!'
 
-                            } else {
-                                resolve({
-                                    DT: {},
-                                    EC: 1,
-                                    EM: 'Wrong password!'
+                            })
 
-                                })
-                            }
+                        } else {
+                            resolve({
+                                DT: {},
+                                EC: 1,
+                                EM: 'Wrong password!'
 
-                        }, delay ? delay : 3000)
+                            })
+                        }
+
+
 
                     } else {
                         resolve({

@@ -41,10 +41,28 @@ let postVerifyBookingAppointment = async (req, res) => {
 
     }
 };
+let getHistoryPatient = async (req, res) => {
+
+
+    try {
+        let history = await patientService.getHistoryPatientService(req.query.patientId)
+        return res.status(200).json(history);
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            EC: -1,
+            EM: "Error from Server!"
+        });
+
+    }
+}
+
+
 
 
 module.exports = {
     postBookingAppointment,
     getConfirmBooking, postVerifyBookingAppointment,
+    getHistoryPatient
 
 }

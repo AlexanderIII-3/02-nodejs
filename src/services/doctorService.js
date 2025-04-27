@@ -7,7 +7,7 @@ import db from '../models/index';
 const dotenv = require('dotenv')
 
 import _, { includes } from "lodash";
-// import emailService from './emailService'
+import emailService from './emailService'
 const MAX_NUMBER_SCHEDULE = 10
 let getTopDoctorHome = (limit) => {
     return new Promise(async (resolve, reject) => {
@@ -517,6 +517,7 @@ let getListPatientForDoctorService = (doctorId, date) => {
     })
 };
 let sendingRemedyService = (dataInput) => {
+
     return new Promise(async (resolve, reject) => {
         try {
             if (!dataInput.email || !dataInput.patientId || !dataInput.doctorId ||
@@ -543,8 +544,25 @@ let sendingRemedyService = (dataInput) => {
                     appointment.statusId = "S3"
                     await appointment.save()
                 }
-                //sending remedy
-                // await emailService.sendAttachment(dataInput);
+                // sending remedy
+                await emailService.sendAttachment(dataInput);
+                // create history
+
+
+
+                await db.History.create({
+
+                    doctorId: dataInput.doctorId,
+                    patientId: dataInput.patientId,
+                    reason: dataInput.reason,
+                    files: dataInput.image,
+                    timeType: dataInput.timeType,
+                    date: dataInput.date
+
+
+                })
+
+
                 resolve({
                     EC: 0,
                     EM: "Ô KÊ!",

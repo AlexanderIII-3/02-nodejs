@@ -11,6 +11,7 @@ let buidUrlEmail = (doctorId, token) => {
 let postBookingAppointmentService = (dataInput) => {
     return new Promise(async (resolve, reject) => {
         try {
+            console.log('check data input', dataInput)
             if (!dataInput.email || !dataInput.doctorId || !dataInput.timeTypeSel
                 || !dataInput.patientName
                 || !dataInput.addressDetail
@@ -18,7 +19,6 @@ let postBookingAppointmentService = (dataInput) => {
                 || !dataInput.dateBooking
 
             ) {
-                console.log('check data sending', dataInput)
 
                 resolve({
                     EC: 1,
@@ -157,9 +157,83 @@ let postVerifyBookingAppointmentService = (data) => {
 
     })
 };
+let getHistoryPatientService = (patientId) => {
 
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!patientId) {
+                resolve({
+                    EC: 1,
+                    EM: "Missing required parameter1!"
+                })
+            } else {
+                let data = await db.History.findAll({
+                    where: {
+                        patientId: patientId,
+
+                    },
+                    attributes: {
+                        exclude: ["createdAt", 'updatedAt'],
+                    },
+
+                    include: [
+                        {
+
+                            model: db.User,
+                            as: 'doctor',
+                            attributes: ['firstName', 'lastName', 'phoneNumber'],
+                            include: {
+
+                                model: db.Doctor_Infor,
+                                attributes: {
+                                    exclude: ['id', 'doctorId', "createdAt", 'updatedAt']
+                                },
+                                include: [
+                                    { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
+                                    { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
+                                    { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
+
+
+                                ]
+                            }
+
+
+
+
+                        },
+                        { model: db.Allcode, as: 'timebooking', attributes: ['valueVi'], }
+
+
+
+                    ],
+
+                    raw: false,
+                    nest: true
+                })
+                if (data && data.length > 0) {
+                    data.map(item => {
+                        item.files = new Buffer.from(item.files, 'base64').toString('binary')
+                        return item;
+
+                    })
+
+
+                }
+                resolve({
+                    EC: 0,
+                    EM: "oke",
+                    data: data
+                })
+            }
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
 
 module.exports = {
     postBookingAppointmentService,
-    getConfirmBookingService, postVerifyBookingAppointmentService
+    getConfirmBookingService, postVerifyBookingAppointmentService,
+    getHistoryPatientService
 }

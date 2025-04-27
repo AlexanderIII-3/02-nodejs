@@ -8,7 +8,7 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            patienI: {
+            patientId: {
                 type: Sequelize.INTEGER
             },
             doctorId: {
@@ -16,13 +16,22 @@ module.exports = {
 
             },
 
-            decription: {
-                type: Sequelize.TEXT
-            },
-            files: {
-                type: Sequelize.TEXT
-            },
 
+            files: {
+                type: Sequelize.BLOB('long')
+
+            },
+            reason: {
+                type: Sequelize.STRING
+            },
+            timeType: {
+
+                type: Sequelize.STRING
+            },
+            date: {
+
+                type: Sequelize.STRING
+            },
 
 
             createdAt: {
