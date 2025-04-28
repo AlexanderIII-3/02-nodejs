@@ -80,7 +80,7 @@ let handleLoginService = (email, password) => {
                     let user = await db.User.findOne({
                         where: { email: email },
                         raw: true,
-                        attributes: ['id', 'email', 'roleId', 'password', 'firstName', 'lastName', 'phoneNumber', 'address'],
+                        attributes: ['id', 'email', 'roleId', 'password', 'firstName', 'lastName', 'phoneNumber', 'address', 'gender'],
 
 
                     }
@@ -221,10 +221,16 @@ let handleGetAllUserService = () => {
                     exclude: ['password']
                 }
             });
-            if (res && res.length > 0) {
+            if (res && res.image) {
+
+
                 res.map(item => {
-                    item.image = new Buffer.from(item.image, 'base64').toString('binary')
-                    return item;
+                    if (item.image) {
+
+                        item.image = Buffer.from(item.image, 'base64').toString('binary')
+                        return item;
+
+                    }
 
                 })
 

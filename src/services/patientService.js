@@ -12,7 +12,10 @@ let postBookingAppointmentService = (dataInput) => {
     return new Promise(async (resolve, reject) => {
         try {
             console.log('check data input', dataInput)
-            if (!dataInput.email || !dataInput.doctorId || !dataInput.timeTypeSel
+            if (
+                !dataInput.email
+                || !dataInput.doctorId
+                || !dataInput.timeTypeSel
                 || !dataInput.patientName
                 || !dataInput.addressDetail
                 || !dataInput.gender
@@ -54,7 +57,12 @@ let postBookingAppointmentService = (dataInput) => {
                 // create a booking record
                 if (user && user[0]) {
                     await db.Booking.findOrCreate({
-                        where: { patienId: user[0].id },
+                        where: {
+                            patienId: user[0].id,
+
+                            date: dataInput.dateBooking,
+
+                        },
                         defaults: {
                             statusId: 'S1',
                             doctorId: dataInput.doctorId,
