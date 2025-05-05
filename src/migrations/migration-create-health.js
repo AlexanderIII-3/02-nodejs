@@ -1,43 +1,42 @@
+
+
+
+
 'use strict';
 module.exports = {
     up: async (queryInterface, Sequelize) => {
-        await queryInterface.createTable('histories', {
+        await queryInterface.createTable('health', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            patientId: {
-                type: Sequelize.INTEGER
-            },
-            doctorId: {
-                type: Sequelize.INTEGER
-
-            },
 
 
-            files: {
-                type: Sequelize.BLOB('long')
-
-            },
-            reason: {
-                type: Sequelize.STRING
-            },
-            timeType: {
-
+            name: {
                 type: Sequelize.STRING
             },
             date: {
-
                 type: Sequelize.STRING
             },
-            result: {
-                type: Sequelize.TEXT
-
+            patientId: {
+                type: Sequelize.INTEGER
             },
-            patientEmail: {
+            height: {
+                type: Sequelize.INTEGER
+            },
+            weight: {
+                type: Sequelize.INTEGER
+            },
+            bmi: {
+                type: Sequelize.FLOAT
+            },
+
+
+            bloodGroup: {
                 type: Sequelize.STRING
+
             },
 
 
@@ -45,13 +44,24 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.DATE
             },
+            actor: {
+                type: Sequelize.STRING,
+                allowNull: false,
+
+
+            },
             updatedAt: {
                 allowNull: false,
                 type: Sequelize.DATE
             }
+        }, {
+            charset: 'utf8',
+            collate: 'utf8_general_ci'
+
+
         });
     },
     down: async (queryInterface, Sequelize) => {
-        await queryInterface.dropTable('histories');
+        await queryInterface.dropTable('health');
     }
 };

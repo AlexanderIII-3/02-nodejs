@@ -42,7 +42,15 @@ let getBodyHTMLEmail = (dataSend) => {
 
     return result;
 };
-let sendAttachment = async (dataSend) => {
+
+
+
+
+
+
+// Hàm gửi email
+
+let sendEmail = async (dataSend) => {
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
@@ -62,8 +70,8 @@ let sendAttachment = async (dataSend) => {
         // attach image
         attachments: [
             {
-                filename: `remedy-${dataSend.patientId}-${dataSend.patientName}.png`,
-                content: dataSend.image.split("base64,")[1],
+                filename: 'KetQuaKham.pdf',
+                content: dataSend.pdf,
                 encoding: 'base64'
             }
         ], // attachments
@@ -87,5 +95,5 @@ let getBodyHTMLEmailRemedy = (data) => {
 
 
 module.exports = {
-    sendSimpleEmail, sendAttachment
+    sendSimpleEmail, sendEmail
 }

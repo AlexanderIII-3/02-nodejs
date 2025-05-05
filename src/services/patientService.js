@@ -240,8 +240,262 @@ let getHistoryPatientService = (patientId) => {
     })
 }
 
+let getHistoryPatientByEmailService = (email) => {
+    return new Promise(async (resolve, reject) => {
+
+        try {
+            if (!email) {
+                resolve({
+                    EC: 1,
+                    EM: "Missing required parameter1!"
+                })
+            } else {
+                let data = await db.History.findAll({
+                    where: {
+                        patientEmail: email,
+
+                    },
+                    attributes: {
+                        exclude: ["createdAt", 'updatedAt'],
+                    },
+
+                    include: [
+                        {
+
+                            model: db.User,
+                            as: 'doctor',
+                            attributes: ['firstName', 'lastName', 'phoneNumber'],
+                            // include: {
+
+                            //     model: db.Doctor_Infor,
+                            //     attributes: {
+                            //         exclude: ['id', 'doctorId', "createdAt", 'updatedAt']
+                            //     },
+                            //     // include: [
+                            //     //     { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
+                            //     //     { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
+                            //     //     { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
+
+
+                            //     // ]
+                            // }
+
+
+
+
+                        },
+                        { model: db.Allcode, as: 'timebooking', attributes: ['valueVi'], }
+
+
+
+                    ],
+
+                    raw: false,
+                    nest: true
+                })
+                if (data && data.length > 0) {
+                    data.map(item => {
+
+                        item.files = new Buffer.from(item.files, 'base64').toString('binary')
+                        return item;
+
+                    })
+
+
+                }
+
+
+                if (data && data.length > 0) {
+
+                    data.map(item => {
+                        const timestamp = item.date
+
+                        item.date = new Date(+timestamp).toLocaleDateString("vi-VN", {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                        });
+
+                        console.log('check date', item.date)
+                        return item;
+
+                    })
+                }
+                resolve({
+                    EC: 0,
+                    EM: "oke",
+                    DT: data
+                })
+            }
+        } catch (error) {
+            reject(error);
+
+        }
+
+    })
+
+}
+let postInforPatientService = (data) => {
+    try {
+        return new Promise(async (resolve, reject) => {
+
+            if (!data.patientId) {
+                resolve({
+                    EC: 1,
+                    EM: "Missing required parameter1!"
+                })
+            } else {
+
+                console.log('check data from server', data)
+                let res = await db.Health.findOrCreate({
+                    where: {
+                        patientId: data.patientId,
+                        date: data.date
+                    },
+                    defaults: {
+                        patientId: data.patientId,
+                        date: data.date,
+                        name: data.patientName,
+                        height: data.height,
+                        weight: data.weight,
+                        bmi: data?.bmi,
+                        actor: data.actor,
+                        bloodGroup: data.bloodType,
+                    },
+                    raw: true
+                })
+                if (!res) {
+                    resolve({
+
+                        EC: 1,
+                        EM: "Not found any schedule booking! "
+
+                    })
+                }
+                resolve({
+
+                    EC: 0,
+                    EM: "O ke!",
+
+                })
+
+
+            }
+        })
+    } catch (error) {
+        console.log(error)
+        reject(error);
+        return res.status(200).json({
+            EC: -1,
+            EM: "Error from Server!"
+        });
+    }
+
+
+}
+
+let getHealthPatientByIdService = (patientId) => {
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!patientId) {
+                resolve({
+                    EC: 1,
+                    EM: "Missing required parameter1!"
+                })
+            } else {
+                let data = await db.Health.findAll({
+                    where: {
+                        patientId: patientId,
+
+                    },
+                    attributes: {
+                        exclude: ["createdAt", 'updatedAt'],
+                    },
+
+
+
+                    raw: true,
+                })
+                resolve({
+                    EC: 0,
+                    EM: "oke",
+                    DT: data
+                })
+
+            }
+
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+let getListBookingByPatientIdService = (patientId) => {
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!patientId) {
+                resolve({
+                    EC: 1,
+                    EM: "Missing required parameter1!"
+                })
+            } else {
+                let data = await db.Booking.findAll({
+                    where: {
+                        patienId: patientId,
+                        statusId: 'S2'
+
+                    },
+
+                    include: [
+                        {
+                            model: db.User,
+
+                            as: "doctorInfo",
+                            attributes: ['firstName', 'lastName', 'phoneNumber'],
+                        },
+                        {
+                            model: db.Allcode,
+                            as: 'timeBookingData',
+                            attributes: ['valueVi', 'valueEn']
+                        },
+                        {
+                            model: db.Allcode,
+                            as: 'status',
+                            attributes: ['valueVi', 'valueEn']
+                        },
+
+
+                    ],
+
+
+
+                    attributes: {
+                        exclude: ["createdAt", 'updatedAt'],
+                    },
+
+
+
+                    raw: false,
+                    nest: true
+                })
+                resolve({
+                    EC: 0,
+                    EM: "oke",
+                    DT: data
+                })
+
+            }
+
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
 module.exports = {
     postBookingAppointmentService,
     getConfirmBookingService, postVerifyBookingAppointmentService,
-    getHistoryPatientService
+    getHistoryPatientService, getHistoryPatientByEmailService,
+    postInforPatientService, getHealthPatientByIdService,
+    getListBookingByPatientIdService
 }

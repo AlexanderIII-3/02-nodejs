@@ -1,12 +1,13 @@
 import { where } from 'sequelize';
 import db from '../models/index';
-
+import generatePDF from './generatePDF';
 // import { where } from "sequelize";
 // import db from "../models";
 // require('dotenv').config();
 const dotenv = require('dotenv')
+const path = require('path');
 
-import _, { includes } from "lodash";
+import _, { includes, result } from "lodash";
 import emailService from './emailService'
 const MAX_NUMBER_SCHEDULE = 10
 let getTopDoctorHome = (limit) => {
@@ -487,7 +488,7 @@ let getListPatientForDoctorService = (doctorId, date) => {
                     include: [
                         {
                             model: db.User, as: 'patientData',
-                            attributes: ['email', 'firstName', 'address', 'gender'],
+                            attributes: ['email', 'firstName', 'lastName', 'address', 'gender'],
                             include: [
                                 { model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueVi'] },
 
@@ -519,9 +520,14 @@ let getListPatientForDoctorService = (doctorId, date) => {
 let sendingRemedyService = (dataInput) => {
 
     return new Promise(async (resolve, reject) => {
+
+
+        console.log('check data input', dataInput)
+
+
         try {
             if (!dataInput.email || !dataInput.patientId || !dataInput.doctorId ||
-                !dataInput.timeType || !dataInput.image) {
+                !dataInput.timeType) {
                 resolve({
                     EC: 1,
                     EM: 'Missing required parameter1!'
@@ -530,6 +536,15 @@ let sendingRemedyService = (dataInput) => {
 
             }
             else {
+                const filePath = path.join(__dirname, '../temp/KetQuaKham.pdf');
+                if (!filePath) {
+                    return res.status(200).json({
+                        EC: -1,
+                        EM: "Not found path!"
+                    });
+                }
+
+                let pdf = await generatePDF(dataInput, filePath);
                 // update patient status
                 let appointment = await db.Booking.findOne({
                     where: {
@@ -544,8 +559,13 @@ let sendingRemedyService = (dataInput) => {
                     appointment.statusId = "S3"
                     await appointment.save()
                 }
+                const dataSend = {
+                    email: dataInput.email,
+                    pdf: pdf,
+                    patientName: dataInput.patientName,
+                };
                 // sending remedy
-                await emailService.sendAttachment(dataInput);
+                await emailService.sendEmail(dataSend);
                 // create history
 
 
@@ -555,9 +575,11 @@ let sendingRemedyService = (dataInput) => {
                     doctorId: dataInput.doctorId,
                     patientId: dataInput.patientId,
                     reason: dataInput.reason,
-                    files: dataInput.image,
+                    files: pdf,
                     timeType: dataInput.timeType,
-                    date: dataInput.date
+                    date: dataInput.date,
+                    result: dataInput.result,
+                    patientEmail: dataInput.email,
 
 
                 })

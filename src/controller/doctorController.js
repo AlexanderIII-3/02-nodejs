@@ -146,6 +146,13 @@ let getListPatientForDoctor = async (req, res) => {
 };
 let sendingRemedy = async (req, res) => {
     try {
+
+
+
+        // let data = await generatePDF(req.body, filePath)
+        // return res.status(200).json(data);
+
+
         let data = await doctorService.sendingRemedyService(req.body);
         return res.status(200).json(data);
     } catch (error) {

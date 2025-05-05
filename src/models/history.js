@@ -17,11 +17,12 @@ module.exports = (sequelize, DataTypes) => {
 
         patientId: DataTypes.INTEGER,
         doctorId: DataTypes.INTEGER,
-        reason: DataTypes.TEXT,
+        result: DataTypes.TEXT,
         files: DataTypes.TEXT,
         reason: DataTypes.STRING,
         timeType: DataTypes.STRING,
         date: DataTypes.STRING,
+        patientEmail: DataTypes.STRING,
     }, {
         sequelize,
         modelName: 'History',
