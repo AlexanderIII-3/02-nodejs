@@ -350,7 +350,8 @@ let postInforPatientService = (data) => {
                 let res = await db.Health.findOrCreate({
                     where: {
                         patientId: data.patientId,
-                        date: data.date
+                        date: data.date,
+                        actor: data.actor
                     },
                     defaults: {
                         patientId: data.patientId,
@@ -492,10 +493,47 @@ let getListBookingByPatientIdService = (patientId) => {
         }
     })
 }
+let cancelBookingAppointmentService = (bookingId) => {
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!bookingId) {
+                resolve({
+                    EC: 1,
+                    EM: "Missing required parameter!"
+                })
+            } else {
+                let data = await db.Booking.findOne({
+                    where: {
+                        id: bookingId
+                    },
+                    raw: false
+                })
+                if (data) {
+                    data.statusId = 'S4'
+                    await data.save()
+                    resolve({
+                        EC: 0,
+                        EM: "Cancel appointment success!"
+                    })
+
+                } else {
+                    resolve({
+                        EC: 2,
+                        EM: "Apointment has been activated or dose not exist!"
+                    })
+                }
+            }
+        } catch (error) {
+            reject(error);
+        }
+
+    })
+}
 module.exports = {
     postBookingAppointmentService,
     getConfirmBookingService, postVerifyBookingAppointmentService,
     getHistoryPatientService, getHistoryPatientByEmailService,
     postInforPatientService, getHealthPatientByIdService,
-    getListBookingByPatientIdService
+    getListBookingByPatientIdService, cancelBookingAppointmentService
 }

@@ -136,11 +136,27 @@ let getListBookingByPatientId = async (req, res) => {
 
     }
 }
+let cancelBookingAppointment = async (req, res) => {
+
+    try {
+        console.log('check data from server1', req.body)
+        let data = await patientService.cancelBookingAppointmentService(req.body.bokingId)
+        return res.status(200).json(data);
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            EC: -1,
+            EM: "Error from Server!"
+        });
+
+    }
+}
 module.exports = {
     postBookingAppointment,
     getConfirmBooking, postVerifyBookingAppointment,
     getHistoryPatient, postGeneralPDF,
     getHistoryPatientByEmail, postInforPatient,
-    getHealthPatientById, getListBookingByPatientId
+    getHealthPatientById, getListBookingByPatientId,
+    cancelBookingAppointment
 
 }
