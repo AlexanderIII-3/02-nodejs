@@ -327,6 +327,75 @@ let bulkCreateScheduleService = (data) => {
         }
     })
 };
+let handleCancelBookingService = (data) => {
+    return new Promise(async (resolve, reject) => {
+
+        try {
+            console.log('check data hehehhee', data.doctorId)
+
+            if (!data.doctorId || !data.patienId
+            ) {
+
+                resolve({
+                    EC: 0,
+                    EM: 'Missing required parameter! '
+                })
+            } else {
+
+                let appoin = await db.Booking.findOne({
+
+                    where: {
+                        doctorId: data.doctorId,
+                        patienId: data.patienId,
+                        timeType: data.timeType,
+                        date: data.date,
+                        statusId: 'S2'
+
+                    }
+                })
+                if (appoin) {
+                    appoin.statusId = 'S4'
+
+                    await appoin.save()
+                }
+                let dataSche = await db.Schedule.findOrCreate({
+
+                    where: {
+                        doctorId: data.doctorId,
+                        timeType: data.timeType,
+                        date: data.date
+
+                    },
+                    defaults: {
+
+                        doctorId: data.doctorId,
+                        timeType: data.timeType,
+                        date: data.date
+                    },
+                    raw: true
+                })
+                if (!dataSche) {
+                    resolve({
+                        EC: 1,
+                        EC: "Huỷ lịch thất bại!"
+                    })
+
+                }
+                resolve({
+                    EC: 0,
+                    EM: "Huỷ lịch thành công "
+                })
+
+            }
+        } catch (error) {
+            reject(error)
+        }
+
+
+    })
+}
+
+
 let getScheduleByDateService = (doctorId, date) => {
     return new Promise(async (resolve, reject) => {
         if (!doctorId || !date) {
@@ -607,5 +676,5 @@ module.exports = {
     getDetailsDoctorById, bulkCreateScheduleService,
     getScheduleByDateService, getMoreInforDoctorService,
     getProfileInforDoctorService, getListPatientForDoctorService,
-    sendingRemedyService
+    sendingRemedyService, handleCancelBookingService
 }

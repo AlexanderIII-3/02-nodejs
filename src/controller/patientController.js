@@ -32,7 +32,6 @@ let getConfirmBooking = async (req, res) => {
 let postVerifyBookingAppointment = async (req, res) => {
 
     try {
-        // console.log('check data from server1', req.body)
         let confirm = await patientService.postVerifyBookingAppointmentService(req.body)
         return res.status(200).json(confirm);
     } catch (error) {

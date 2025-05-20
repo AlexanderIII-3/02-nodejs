@@ -67,14 +67,13 @@ let sendEmail = async (dataSend) => {
         subject: "Kết Quả  Lịch Khám bệnh ✔", // Subject line
         text: "Konichiwa?", // plain text body
         html: getBodyHTMLEmailRemedy(dataSend), // html body
-        // attach image
         attachments: [
             {
                 filename: 'KetQuaKham.pdf',
                 content: dataSend.pdf,
                 encoding: 'base64'
             }
-        ], // attachments
+        ],
     });
 };
 let getBodyHTMLEmailRemedy = (data) => {

@@ -11,7 +11,6 @@ let buidUrlEmail = (doctorId, token) => {
 let postBookingAppointmentService = (dataInput) => {
     return new Promise(async (resolve, reject) => {
         try {
-            console.log('check data input', dataInput)
             if (
                 !dataInput.email
                 || !dataInput.doctorId
@@ -102,6 +101,8 @@ let getConfirmBookingService = (data) => {
                         email: data.email
                     }
                 })
+                console.log('check data booking  ', data)
+
                 if (!data) {
                     resolve({
 
@@ -147,6 +148,15 @@ let postVerifyBookingAppointmentService = (data) => {
                 if (appointment) {
                     appointment.statusId = 'S2'
                     await appointment.save()
+
+                    let deleteShedule = await db.Schedule.destroy({
+                        where: {
+                            doctorId: appointment?.doctorId,
+                            date: appointment?.date,
+                            timeType: appointment.timeType
+                        },
+                    });
+
                     resolve({
                         EC: 0,
                         EM: "Update appointment success!"
@@ -316,7 +326,6 @@ let getHistoryPatientByEmailService = (email) => {
                             day: "2-digit",
                         });
 
-                        console.log('check date', item.date)
                         return item;
 
                     })
@@ -336,64 +345,86 @@ let getHistoryPatientByEmailService = (email) => {
 
 }
 let postInforPatientService = (data) => {
-    try {
-        return new Promise(async (resolve, reject) => {
-
+    return new Promise(async (resolve, reject) => {
+        try {
             if (!data.patientId) {
-                resolve({
+                return resolve({
                     EC: 1,
                     EM: "Missing required parameter1!"
-                })
-            } else {
-
-                console.log('check data from server', data)
-                let res = await db.Health.findOrCreate({
-                    where: {
-                        patientId: data.patientId,
-                        date: data.date,
-                        actor: data.actor
-                    },
-                    defaults: {
-                        patientId: data.patientId,
-                        date: data.date,
-                        name: data.patientName,
-                        height: data.height,
-                        weight: data.weight,
-                        bmi: data?.bmi,
-                        actor: data.actor,
-                        bloodGroup: data.bloodType,
-                    },
-                    raw: true
-                })
-                if (!res) {
-                    resolve({
-
-                        EC: 1,
-                        EM: "Not found any schedule booking! "
-
-                    })
-                }
-                resolve({
-
-                    EC: 0,
-                    EM: "O ke!",
-
-                })
-
-
+                });
             }
-        })
-    } catch (error) {
-        console.log(error)
-        reject(error);
-        return res.status(200).json({
-            EC: -1,
-            EM: "Error from Server!"
-        });
-    }
 
+            // Kiểm tra xem bản ghi đã tồn tại chưa
+            const existingRecord = await db.Health.findOne({
+                where: {
+                    patientId: data.patientId,
+                    date: +data.date,
+                    actor: data.actor
+                }
+            });
 
-}
+            if (existingRecord) {
+                // Nếu đã tồn tại thì cập nhật
+                const updated = await db.Health.update(
+                    {
+                        height: data.height || existingRecord.height,
+                        weight: data.weight || existingRecord.weight,
+                        bmi: data?.bmi || existingRecord.bmi,
+                        bloodGroup: data.bloodType || existingRecord.bloodGroup
+                    },
+                    {
+                        where: {
+                            id: existingRecord.id
+                        }
+                    }
+                );
+
+                if (updated[0] > 0) {
+                    return resolve({
+                        EC: 0,
+                        EM: "Cập nhật thông tin thành công!"
+                    });
+                } else {
+                    return resolve({
+                        EC: 1,
+                        EM: "Cập nhật thất bại!"
+                    });
+                }
+            } else {
+                // Nếu chưa tồn tại thì tạo mới
+                const created = await db.Health.create({
+                    patientId: data.patientId,
+                    date: data.date,
+                    name: data.patientName,
+                    height: data.height,
+                    weight: data.weight,
+                    bmi: data?.bmi,
+                    actor: data.actor,
+                    bloodGroup: data.bloodType,
+                });
+
+                if (created) {
+                    return resolve({
+                        EC: 0,
+                        EM: "Tạo mới thông tin thành công!"
+                    });
+                } else {
+                    return resolve({
+                        EC: 1,
+                        EM: "Tạo mới thất bại!"
+                    });
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            return reject({
+                EC: -1,
+                EM: "Error from Server!",
+                error: error.message
+            });
+        }
+    });
+};
 
 let getHealthPatientByIdService = (patientId) => {
 

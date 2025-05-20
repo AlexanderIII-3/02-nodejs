@@ -87,6 +87,22 @@ let bulkCreateSchedule = async (req, res) => {
         })
     }
 }
+let handleCancelBooking = async (req, res) => {
+    try {
+
+        let data = await doctorService.handleCancelBookingService(req.body);
+        return res.status(200).json(data)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            EC: -1,
+            EM: 'Error from server'
+        })
+    }
+
+
+}
+
 let getScheduleByDate = async (req, res) => {
     try {
         if (!req.query.doctorId || !req.query.date) {
@@ -174,5 +190,6 @@ module.exports = {
     getMoreInforDoctor: getMoreInforDoctor,
     getProfileInforDoctor: getProfileInforDoctor,
     getListPatientForDoctor: getListPatientForDoctor,
-    sendingRemedy: sendingRemedy
+    sendingRemedy: sendingRemedy,
+    handleCancelBooking: handleCancelBooking
 }
