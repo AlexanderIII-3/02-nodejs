@@ -63,6 +63,10 @@ let initWebRoute = (app) => {
     router.get('/api/v1/get-list-booking', patientController.getListBookingByPatientId)
 
     router.post('/api/v1/cancel-booking', patientController.cancelBookingAppointment)
+    router.post('/api/v1/save-follow-up', doctorController.handleSaveFollowUp)
+
+    router.get('/api/v1/fetch-all-rexam', doctorController.fetchAllRexam)
+    router.put('/api/v1/update-follow-up', doctorController.handleUpdateFollowUp)
     // router.post('/api/v1/genaral-pdf', patientController.postGeneralPDF)
 
     // Ví dụ ở backend Node.js (Express)

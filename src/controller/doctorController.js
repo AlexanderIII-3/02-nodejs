@@ -162,7 +162,7 @@ let getListPatientForDoctor = async (req, res) => {
 };
 let sendingRemedy = async (req, res) => {
     try {
-
+        console.log('check data sending', req.body)
 
 
         // let data = await generatePDF(req.body, filePath)
@@ -172,6 +172,7 @@ let sendingRemedy = async (req, res) => {
         let data = await doctorService.sendingRemedyService(req.body);
         return res.status(200).json(data);
     } catch (error) {
+        console.log(error)
         return res.status(200).json({
             EC: -1,
             EM: "Error from server"
@@ -179,6 +180,52 @@ let sendingRemedy = async (req, res) => {
 
     }
 };
+let handleSaveFollowUp = async (req, res) => {
+
+    try {
+        console.log('check data follow up', req.body)
+        let data = await doctorService.handleSaveFollowUpService(req.body);
+        return res.status(200).json(data);
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            EC: -1,
+            EM: "Error from server"
+        });
+
+    }
+
+}
+let fetchAllRexam = async (req, res) => {
+    try {
+        let data = await doctorService.fetchAllRexamService(req.query.doctorId)
+        return res.status(200).json(data);
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            EC: -1,
+            EM: "Error from server"
+        });
+    }
+
+}
+
+let handleUpdateFollowUp = async (req, res) => {
+    try {
+        console.log('check data follow up', req.body)
+        let data = await doctorService.handleUpdateFollowUpService(req.body);
+        return res.status(200).json(data);
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            EC: -1,
+            EM: "Error from server"
+        });
+
+    }
+
+}
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getDetailDoctor: getDetailDoctor,
@@ -191,5 +238,8 @@ module.exports = {
     getProfileInforDoctor: getProfileInforDoctor,
     getListPatientForDoctor: getListPatientForDoctor,
     sendingRemedy: sendingRemedy,
-    handleCancelBooking: handleCancelBooking
+    handleCancelBooking: handleCancelBooking,
+    handleSaveFollowUp: handleSaveFollowUp,
+    fetchAllRexam: fetchAllRexam,
+    handleUpdateFollowUp: handleUpdateFollowUp
 }

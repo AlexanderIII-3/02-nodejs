@@ -7,8 +7,9 @@ import generatePDF from './generatePDF';
 const dotenv = require('dotenv')
 const path = require('path');
 
-import _, { includes, result } from "lodash";
+import _, { includes, reject, result } from "lodash";
 import emailService from './emailService'
+import { raw } from 'body-parser';
 const MAX_NUMBER_SCHEDULE = 10
 let getTopDoctorHome = (limit) => {
     return new Promise(async (resolve, reject) => {
@@ -589,14 +590,13 @@ let getListPatientForDoctorService = (doctorId, date) => {
 let sendingRemedyService = (dataInput) => {
 
     return new Promise(async (resolve, reject) => {
-
-
         console.log('check data input', dataInput)
-
-
         try {
-            if (!dataInput.email || !dataInput.patientId || !dataInput.doctorId ||
-                !dataInput.timeType) {
+            if (!dataInput.email
+                || !dataInput.patientId
+                || !dataInput.doctorId
+                || !dataInput.token
+            ) {
                 resolve({
                     EC: 1,
                     EM: 'Missing required parameter1!'
@@ -617,9 +617,7 @@ let sendingRemedyService = (dataInput) => {
                 // update patient status
                 let appointment = await db.Booking.findOne({
                     where: {
-                        doctorId: dataInput.doctorId,
-                        patienId: dataInput.patientId,
-                        timeType: dataInput.timeType,
+                        token: dataInput.token,
                         statusId: 'S2'
                     },
                     raw: false
@@ -669,6 +667,155 @@ let sendingRemedyService = (dataInput) => {
         }
     })
 };
+
+let handleSaveFollowUpService = (data) => {
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.doctorId || !data.patientId) {
+                resolve({
+                    EC: 1,
+                    EM: 'Missing required parameter!'
+                })
+
+            } else {
+
+                let res = await db.FollowUp.findOrCreate({
+
+                    where: {
+                        patientId: data.patientId,
+                        doctorId: data.doctorId,
+                        date: data.date
+
+                    },
+                    defaults: {
+                        patientEmail: data.patientEmail,
+                        doctorId: data.doctorId,
+                        status: false,
+                        date: data.date,
+                        patientId: data.patientId,
+                        reason: data.reason,
+                        result: data.result,
+                        token: data.token
+
+                    },
+                    raw: true
+
+                })
+                if (res) {
+                    let dataBooking = await db.Booking.findOne({
+
+                        where: {
+                            token: data.token
+                        }
+                    })
+                    dataBooking.statusId = "S5";
+                    await dataBooking.save();
+
+                    resolve({
+                        EC: 0,
+                        EM: 'Xác nhận lịch tái khám thành công!'
+                    })
+                } else {
+                    resolve({
+                        EC: 1,
+                        EM: 'Xác nhận lịch tái khám không thành công!'
+                    })
+
+                }
+
+
+
+            }
+        } catch (error) {
+
+            reject(error)
+        }
+
+
+
+    })
+}
+let fetchAllRexamService = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let res = await db.FollowUp.findAll({
+
+                where: {
+                    doctorId: id,
+                    status: false
+                },
+                include: [
+                    { model: db.User, attributes: ['firstName', 'lastName'] },
+                    { model: db.Booking, attributes: ["timeType"], as: 'followupData' }
+                ],
+                raw: true,
+                nest: true
+            })
+            let data = {}
+            if (!res) {
+                resolve({
+
+                    EC: -1,
+                    EM: "Không tìm thấy lịch tái khám nào!",
+                    DT: data
+                })
+            } else {
+
+                data = res
+                resolve({
+
+                    EC: 0,
+                    EM: "Oke!",
+                    DT: data
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+
+
+    })
+
+}
+let handleUpdateFollowUpService = (data) => {
+    return new Promise(async (resolve, reject) => {
+
+        console.log('check data follow up tokent', data)
+        try {
+            if (!data.token) {
+                resolve({
+                    EC: 1,
+                    EM: 'Missing required parameter!'
+                })
+            } else {
+                let res = await db.FollowUp.findOne({
+                    where: {
+                        token: data.token
+                    },
+
+                    raw: false,
+                })
+                if (res) {
+                    res.status = true;
+                    await res.save();
+                    resolve({
+                        EC: 0,
+                        EM: 'Cập nhật lịch tái khám thành công!'
+                    })
+                } else {
+                    resolve({
+                        EC: 1,
+                        EM: 'Cập nhật lịch tái khám không thành công!'
+                    })
+                }
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getDetailDoctorService,
@@ -676,5 +823,6 @@ module.exports = {
     getDetailsDoctorById, bulkCreateScheduleService,
     getScheduleByDateService, getMoreInforDoctorService,
     getProfileInforDoctorService, getListPatientForDoctorService,
-    sendingRemedyService, handleCancelBookingService
+    sendingRemedyService, handleCancelBookingService,
+    handleSaveFollowUpService, fetchAllRexamService, handleUpdateFollowUpService
 }
