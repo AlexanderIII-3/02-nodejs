@@ -561,10 +561,36 @@ let cancelBookingAppointmentService = (bookingId) => {
 
     })
 }
+let getAllProvincesService = () => {
+
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            let data = await db.Allcode.findAll({
+                where: {
+                    type: 'PROVINCE'
+                },
+                attributes: ['keyMap', 'valueEn', 'valueVi'],
+                raw: true
+            })
+            resolve({
+                EC: 0,
+                EM: "oke",
+                DT: data
+            })
+
+
+
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
 module.exports = {
     postBookingAppointmentService,
     getConfirmBookingService, postVerifyBookingAppointmentService,
     getHistoryPatientService, getHistoryPatientByEmailService,
     postInforPatientService, getHealthPatientByIdService,
-    getListBookingByPatientIdService, cancelBookingAppointmentService
+    getListBookingByPatientIdService, cancelBookingAppointmentService,
+    getAllProvincesService
 }

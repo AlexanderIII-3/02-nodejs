@@ -164,11 +164,6 @@ let sendingRemedy = async (req, res) => {
     try {
         console.log('check data sending', req.body)
 
-
-        // let data = await generatePDF(req.body, filePath)
-        // return res.status(200).json(data);
-
-
         let data = await doctorService.sendingRemedyService(req.body);
         return res.status(200).json(data);
     } catch (error) {
@@ -226,6 +221,34 @@ let handleUpdateFollowUp = async (req, res) => {
     }
 
 }
+let handleCreateRexam = async (req, res) => {
+    try {
+        let data = await doctorService.handleCreateRexamService(req.body);
+
+        return res.status(200).json(data);
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            EC: -1,
+            EM: "Error from server"
+        });
+
+    }
+}
+let getAllDoctorProvince = async (req, res) => {
+    try {
+        console.log('check data province', req.query)
+        let data = await doctorService.getAllDoctorProvinceService(req.query.province, req.query.specialtyId);
+        return res.status(200).json(data);
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            EC: -1,
+            EM: "Error from server"
+        });
+
+    }
+}
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getDetailDoctor: getDetailDoctor,
@@ -241,5 +264,7 @@ module.exports = {
     handleCancelBooking: handleCancelBooking,
     handleSaveFollowUp: handleSaveFollowUp,
     fetchAllRexam: fetchAllRexam,
-    handleUpdateFollowUp: handleUpdateFollowUp
+    handleUpdateFollowUp: handleUpdateFollowUp,
+    handleCreateRexam: handleCreateRexam,
+    getAllDoctorProvince: getAllDoctorProvince
 }

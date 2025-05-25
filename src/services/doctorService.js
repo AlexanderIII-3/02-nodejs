@@ -239,9 +239,14 @@ let getDetailsDoctorById = (inputId) => {
                         {
                             model: db.Doctor_Infor,
                             attributes: {
-                                exclude: ['id', 'doctorId']
+                                exclude: ['id', 'doctorId',]
                             },
                             include: [
+                                {
+                                    model: db.Clinic, as: 'clinicData', attributes: {
+                                        exclude: ['image', 'createdAt', 'updatedAt'],
+                                    },
+                                },
                                 { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
                                 { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
                                 { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
@@ -313,7 +318,6 @@ let bulkCreateScheduleService = (data) => {
                     await db.Schedule.bulkCreate(toCreate);
 
                 }
-                console.log('to creat', toCreate)
 
 
                 resolve({
@@ -566,7 +570,9 @@ let getListPatientForDoctorService = (doctorId, date) => {
                         },
                         {
                             model: db.Allcode, as: 'timeBookingData', attributes: ['valueEn', 'valueVi'],
-                        }
+
+                        },
+                        { model: db.Doctor_Infor, as: 'doctorInforData', attributes: ['doctorId', 'nameClinic', 'addressClinic'] },
                     ],
                     raw: false,
                     nest: true
@@ -590,7 +596,6 @@ let getListPatientForDoctorService = (doctorId, date) => {
 let sendingRemedyService = (dataInput) => {
 
     return new Promise(async (resolve, reject) => {
-        console.log('check data input', dataInput)
         try {
             if (!dataInput.email
                 || !dataInput.patientId
@@ -816,6 +821,102 @@ let handleUpdateFollowUpService = (data) => {
     })
 }
 
+let handleCreateRexamService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data) {
+                resolve({
+                    EC: 1,
+                    EM: 'Missing required parameter!',
+                    DT: null
+                });
+            } else {
+                let res = await db.FollowUp.findOrCreate({
+                    where: {
+                        patientId: data.patientId,
+                        date: data.date
+                    },
+                    defaults: {
+                        patientEmail: data.patientEmail,
+                        doctorId: data.doctorId,
+                        status: false,
+                        date: data.date,
+                        patientId: data.patientId,
+                        reason: data.reason,
+                        result: data.result,
+                        token: data.token
+                    },
+                    raw: true
+                });
+                // Lấy object dữ liệu ở vị trí 0
+                const followUpData = res[0];
+
+                resolve({
+                    EC: 0,
+                    EM: 'Tạo lịch tái khám thành công!',
+                    DT: followUpData
+                });
+
+            }
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    });
+};
+let getAllDoctorProvinceService = (province, specialtyId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!province || !specialtyId) {
+                resolve({
+                    EC: 1,
+                    EM: 'Missing required parameter!'
+                })
+            } else {
+                if (province === 'ALL') {
+
+                    let data = await db.Doctor_Infor.findAll({
+                        where: {
+                            specialtyId: specialtyId,
+                        },
+                        attributes: {
+                            exclude: ['createdAt', 'updatedAt'],
+                        },
+                        raw: false,
+                    });
+                    resolve({
+                        EC: 0,
+                        EM: "Oke!",
+                        DT: data
+                    });
+                } else {
+                    let data = await db.Doctor_Infor.findAll({
+                        where: {
+                            specialtyId: specialtyId,
+                            provinceId: province
+                        },
+                        attributes: {
+                            exclude: ['createdAt', 'updatedAt'],
+                        },
+                        raw: false,
+                    });
+                    resolve({
+                        EC: 0,
+                        EM: "Oke!",
+                        DT: data
+                    });
+                }
+
+
+
+            }
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    });
+
+}
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getDetailDoctorService,
@@ -824,5 +925,6 @@ module.exports = {
     getScheduleByDateService, getMoreInforDoctorService,
     getProfileInforDoctorService, getListPatientForDoctorService,
     sendingRemedyService, handleCancelBookingService,
-    handleSaveFollowUpService, fetchAllRexamService, handleUpdateFollowUpService
+    handleSaveFollowUpService, fetchAllRexamService, handleUpdateFollowUpService,
+    handleCreateRexamService, getAllDoctorProvinceService
 }

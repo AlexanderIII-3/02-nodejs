@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
             Booking.belongsTo(models.Allcode, { foreignKey: 'statusId', targetKey: 'keyMap', as: 'status' })
             Booking.belongsTo(models.History, { foreignKey: 'patienId', targetKey: 'patientId', as: 'timebooking' })
             Booking.hasOne(models.FollowUp, { foreignKey: 'token', targetKey: 'token', as: 'followupData' })
+            Booking.belongsTo(models.Doctor_Infor, { foreignKey: 'doctorId', targetKey: 'doctorId', as: 'doctorInforData' })
         }
     };
     Booking.init({

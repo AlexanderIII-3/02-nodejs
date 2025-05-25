@@ -152,7 +152,7 @@ let getDetailSpecialtyByIdService = (dataId, location) => {
     return new Promise(async (resolve, reject) => {
 
         try {
-            if (!dataId || !location) {
+            if (!dataId) {
                 resolve({
                     EC: 1,
                     EM: "Missing required parameter!"
@@ -163,38 +163,20 @@ let getDetailSpecialtyByIdService = (dataId, location) => {
 
                 let data = await db.Specialty.findOne({
                     where: { id: dataId },
-                    attributes: ['descriptionHtml', 'descriptionMarkDown'],
+                    attributes: ['name', 'descriptionHtml', 'descriptionMarkDown'],
 
                     raw: true,
                 })
-                if (data) {
-                    // query twice
-                    let doctorSpecialty = [];
-                    if (location === 'ALL') {
-                        doctorSpecialty = await db.Doctor_Infor.findAll({
-                            where: { specialtyId: dataId },
-                            attributes: ['doctorId', 'provinceId'],
-                            raw: true
-
-                        })
-                    } else {
-                        // find by location
-                        doctorSpecialty = await db.Doctor_Infor.findAll({
-                            where: {
-                                specialtyId: dataId,
-                                provinceId: location
-                            },
-                            attributes: ['doctorId', 'provinceId'],
-                            raw: true
-
-                        })
-                    }
-
-                    data.doctorSpecialty = doctorSpecialty;
-                } else data = {};
 
 
+                if (!data) {
+                    resolve({
+                        EC: 1,
+                        EM: "Specialty not found!"
+                    })
+                    return;
 
+                }
 
 
                 resolve({

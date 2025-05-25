@@ -37,7 +37,7 @@ let initWebRoute = (app) => {
     router.get('/api/v1/fetch-specialty-infor', specialtyController.getAllSpecialty)
     router.post('/api/v1/handle-delete-specialty', specialtyController.handleDeleteSpecialty);
     router.post('/api/v1/handle-update-specialty', specialtyController.handleUpdateSpecialty)
-    // router.get('/api/v1/get-detail-specialty-by-id', specialtyController.getDetailSpecialtyById);
+    router.get('/api/v1/get-specialty-by-id', specialtyController.getDetailSpecialtyById);
 
     router.post('/api/v1/create-new-clinic', clinicController.handleCreateNewClinic);
     router.get('/api/v1/get-all-clinic', clinicController.getAllClinic);
@@ -67,9 +67,14 @@ let initWebRoute = (app) => {
 
     router.get('/api/v1/fetch-all-rexam', doctorController.fetchAllRexam)
     router.put('/api/v1/update-follow-up', doctorController.handleUpdateFollowUp)
+    router.post('/api/v1/handle-create-reexam', doctorController.handleCreateRexam)
+
+
+    router.get('/api/v1/get-all-province', patientController.getAllProvinces)
+    router.get('/api/v1/get-all-doctor-province', doctorController.getAllDoctorProvince)
+
     // router.post('/api/v1/genaral-pdf', patientController.postGeneralPDF)
 
-    // Ví dụ ở backend Node.js (Express)
 
 
 

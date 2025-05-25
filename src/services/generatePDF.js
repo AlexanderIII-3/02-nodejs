@@ -36,7 +36,7 @@ async function generatePDF(patientInfo, filePath) {
         doc
             .font("Bold")
             .fontSize(16)
-            .text("PHÒNG KHÁM ĐA KHOA ABC", 120, 35, { align: "center" })
+            .text(`${patientInfo.nameClinic || ""}`, 120, 35, { align: "center" })
             .fontSize(20)
             .text("PHIẾU KẾT QUẢ KHÁM BỆNH", { align: "center", underline: true });
 
