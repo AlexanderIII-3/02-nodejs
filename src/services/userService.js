@@ -211,6 +211,43 @@ let handleCreateUserService = (data) => {
         }
     });
 }
+
+let handleUpdateUserService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data) {
+                resolve({
+                    EC: -1,
+                    EM: 'Missing parameter data'
+                })
+            } else {
+                let user = await db.User.findOne({
+                    where: { id: data.id },
+                    raw: false
+                });
+                if (user) {
+                    user.firstName = data.firstName;
+                    user.lastName = data.lastName;
+                    user.email = data.email;
+                    user.address = data.address;
+                    await user.save();
+
+                    resolve({
+                        EC: 0,
+                        EM: 'Update user successfully!'
+                    })
+                } else {
+                    resolve({
+                        EC: -1,
+                        EM: 'User not found!'
+                    })
+                }
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 let handleGetAllUserService = () => {
     return new Promise(async (resolve, reject) => {
 
@@ -311,5 +348,6 @@ module.exports = {
 
     connectDbTest, handleLoginService,
     handleCreateUserService, handleGetAllUserService,
-    handleDeleteUserService, handleGetAllCodeServices
+    handleDeleteUserService, handleGetAllCodeServices,
+    handleUpdateUserService
 }

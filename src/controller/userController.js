@@ -75,6 +75,18 @@ let handleGetAllUsers = async (req, res) => {
     }
 
 };
+
+let handleUpdateUser = async (req, res) => {
+
+    try {
+        let data = await userService.handleUpdateUserService(req.body);
+        return res.status(200).json(
+            data
+        )
+    } catch (error) {
+        console.log(error)
+    }
+}
 let handleDeleteUser = async (req, res) => {
 
     try {
@@ -132,5 +144,6 @@ module.exports = {
     handleRes, handleLogin,
     handleCreateUser, handleGetAllUsers,
     handleDeleteUser, handleGetAllCode,
+    handleUpdateUser
 
 }
