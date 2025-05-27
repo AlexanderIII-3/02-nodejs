@@ -81,8 +81,6 @@ let getAllClinicService = () => {
                     return item;
 
                 })
-
-
             }
             resolve({
                 EC: 0,

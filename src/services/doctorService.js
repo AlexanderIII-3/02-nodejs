@@ -336,7 +336,6 @@ let handleCancelBookingService = (data) => {
     return new Promise(async (resolve, reject) => {
 
         try {
-            console.log('check data hehehhee', data.doctorId)
 
             if (!data.doctorId || !data.patienId
             ) {

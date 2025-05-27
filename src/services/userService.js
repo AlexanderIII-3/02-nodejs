@@ -230,6 +230,7 @@ let handleUpdateUserService = (data) => {
                     user.lastName = data.lastName;
                     user.email = data.email;
                     user.address = data.address;
+                    user.image = data.image;
                     await user.save();
 
                     resolve({
@@ -253,25 +254,18 @@ let handleGetAllUserService = () => {
 
         try {
             let res = await db.User.findAll({
-                raw: true,
                 attributes: {
                     exclude: ['password']
-                }
+                },
+                raw: true,
+
             });
-            if (res && res.image) {
-
-
+            if (res && res.length > 0) {
                 res.map(item => {
-                    if (item.image) {
-
-                        item.image = Buffer.from(item.image, 'base64').toString('binary')
-                        return item;
-
-                    }
+                    item.image = new Buffer.from(item.image, 'base64').toString('binary')
+                    return item;
 
                 })
-
-
             }
             if (res) {
                 resolve({

@@ -54,9 +54,6 @@ let handleCreateUser = async (req, res) => {
 
 
             })
-
-
-
         }
 
 
