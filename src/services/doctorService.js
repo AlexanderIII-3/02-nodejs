@@ -830,12 +830,25 @@ let handleCreateRexamService = (data) => {
                     DT: null
                 });
             } else {
-                let res = await db.FollowUp.findOrCreate({
+                let res = await db.FollowUp.findOne({
                     where: {
                         patientId: data.patientId,
-                        date: data.date
+                        is_clone: false,
+                        token: data.token,
+
                     },
-                    defaults: {
+                    raw: false,
+
+                });
+
+                if (res) {
+
+                    res.is_clone = true;
+                    await res.save();
+
+                    let response = await db.FollowUp.create({
+
+
                         patientEmail: data.patientEmail,
                         doctorId: data.doctorId,
                         status: false,
@@ -843,10 +856,20 @@ let handleCreateRexamService = (data) => {
                         patientId: data.patientId,
                         reason: data.reason,
                         token: data.token,
-                        is_clone: true
-                    },
-                    raw: true
-                });
+                        is_clone: false
+
+                    });
+
+                    if (response) {
+                        resolve({
+                            EC: 0,
+                            EM: 'Tạo lịch tái khám thành công!',
+                            DT: response
+                        });
+                    }
+
+
+                }
                 // Lấy object dữ liệu ở vị trí 0
                 const followUpData = res[0];
 

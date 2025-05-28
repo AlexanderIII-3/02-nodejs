@@ -263,7 +263,6 @@ let handleDeleteRexam = async (req, res) => {
 }
 let handleUpdateRexam = async (req, res) => {
     try {
-        console.log('check data reexam', req.body)
         let data = await doctorService.handleUpdateRexamService(req.body);
         return res.status(200).json(data);
     } catch (error) {
