@@ -697,11 +697,10 @@ let handleSaveFollowUpService = (data) => {
                         doctorId: data.doctorId,
                         status: false,
                         date: data.date,
+                        is_clone: false,
                         patientId: data.patientId,
                         reason: data.reason,
-                        result: data.result,
                         token: data.token
-
                     },
                     raw: true
 
@@ -747,7 +746,8 @@ let fetchAllRexamService = (id) => {
 
                 where: {
                     doctorId: id,
-                    status: false
+                    status: false,
+                    is_clone: false
                 },
                 include: [
                     { model: db.User, attributes: ['firstName', 'lastName'] },
@@ -842,8 +842,8 @@ let handleCreateRexamService = (data) => {
                         date: data.date,
                         patientId: data.patientId,
                         reason: data.reason,
-                        result: data.result,
-                        token: data.token
+                        token: data.token,
+                        is_clone: true
                     },
                     raw: true
                 });
@@ -916,6 +916,77 @@ let getAllDoctorProvinceService = (province, specialtyId) => {
     });
 
 }
+let handleDeleteRexamService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data) {
+                resolve({
+                    EC: 1,
+                    EM: 'Missing required parameter!'
+                })
+            } else {
+                let res = await db.FollowUp.destroy({
+                    where: {
+                        token: data.token,
+                        date: data.date,
+                    }
+                });
+                if (res) {
+                    resolve({
+                        EC: 0,
+                        EM: 'Xoá lịch tái khám thành công!'
+                    })
+                } else {
+                    resolve({
+                        EC: 1,
+                        EM: 'Xoá lịch tái khám không thành công!'
+                    })
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    });
+}
+
+let handleUpdateRexamService = (data) => {
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data) {
+                resolve({
+                    EC: 1,
+                    EM: 'Missing required parameter!'
+                })
+            } else {
+                let res = await db.FollowUp.findOne({
+                    where: {
+                        id: data.id
+                    },
+                    raw: false,
+                })
+                if (res) {
+                    res.date = data.date;
+                    res.reason = data.reason;
+                    res.result = data.result;
+                    await res.save();
+                    resolve({
+                        EC: 0,
+                        EM: 'Cập nhật lịch tái khám thành công!'
+                    })
+                } else {
+                    resolve({
+                        EC: 1,
+                        EM: 'Cập nhật lịch tái khám không thành công!'
+                    })
+                }
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getDetailDoctorService,
@@ -925,5 +996,6 @@ module.exports = {
     getProfileInforDoctorService, getListPatientForDoctorService,
     sendingRemedyService, handleCancelBookingService,
     handleSaveFollowUpService, fetchAllRexamService, handleUpdateFollowUpService,
-    handleCreateRexamService, getAllDoctorProvinceService
+    handleCreateRexamService, getAllDoctorProvinceService, handleDeleteRexamService,
+    handleUpdateRexamService
 }

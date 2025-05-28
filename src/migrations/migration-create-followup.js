@@ -31,9 +31,9 @@ module.exports = {
 
                 type: Sequelize.STRING,
             },
-            result: {
+            is_clone: {
 
-                type: Sequelize.STRING,
+                type: Sequelize.BOOLEAN,
             },
             token: {
 

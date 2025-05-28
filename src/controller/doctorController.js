@@ -178,7 +178,6 @@ let sendingRemedy = async (req, res) => {
 let handleSaveFollowUp = async (req, res) => {
 
     try {
-        console.log('check data follow up', req.body)
         let data = await doctorService.handleSaveFollowUpService(req.body);
         return res.status(200).json(data);
     } catch (error) {
@@ -249,6 +248,32 @@ let getAllDoctorProvince = async (req, res) => {
 
     }
 }
+let handleDeleteRexam = async (req, res) => {
+    try {
+        let data = await doctorService.handleDeleteRexamService(req.body);
+        return res.status(200).json(data);
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            EC: -1,
+            EM: "Error from server"
+        });
+    }
+
+}
+let handleUpdateRexam = async (req, res) => {
+    try {
+        console.log('check data reexam', req.body)
+        let data = await doctorService.handleUpdateRexamService(req.body);
+        return res.status(200).json(data);
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            EC: -1,
+            EM: "Error from server"
+        });
+    }
+}
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getDetailDoctor: getDetailDoctor,
@@ -266,5 +291,7 @@ module.exports = {
     fetchAllRexam: fetchAllRexam,
     handleUpdateFollowUp: handleUpdateFollowUp,
     handleCreateRexam: handleCreateRexam,
-    getAllDoctorProvince: getAllDoctorProvince
+    getAllDoctorProvince: getAllDoctorProvince,
+    handleDeleteRexam: handleDeleteRexam,
+    handleUpdateRexam: handleUpdateRexam
 }

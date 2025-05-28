@@ -72,7 +72,9 @@ let initWebRoute = (app) => {
 
     router.get('/api/v1/get-all-province', patientController.getAllProvinces)
     router.get('/api/v1/get-all-doctor-province', doctorController.getAllDoctorProvince)
+    router.delete('/api/v1/delete-reexam', doctorController.handleDeleteRexam)
 
+    router.put('/api/v1/update-reexam', doctorController.handleUpdateRexam)
     // router.post('/api/v1/genaral-pdf', patientController.postGeneralPDF)
 
 

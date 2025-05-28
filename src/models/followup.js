@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         patientId: DataTypes.INTEGER,
         date: DataTypes.STRING,
         reason: DataTypes.STRING,
-        result: DataTypes.STRING,
+        is_clone: DataTypes.BOOLEAN,
         token: DataTypes.STRING,
 
     }, {
