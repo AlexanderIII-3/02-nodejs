@@ -50,7 +50,8 @@ let handleCheckEmail = (email) => {
             let user = await db.User.findOne({
                 where: {
                     email: email
-                }
+                },
+                raw: true
             })
             if (user) {
                 resolve(true);
@@ -65,6 +66,48 @@ let handleCheckEmail = (email) => {
     });
 
 };
+
+let handleResetPasswordService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (data) {
+                let isExist = await handleCheckEmail(data.email)
+                if (isExist) {
+                    let hashPassword = await handleHashPassword(data.password)
+                    let user = await db.User.update({
+                        password: hashPassword
+                    }, {
+                        where: { email: data.email }
+                    })
+                    if (user) {
+                        resolve({
+                            EC: 0,
+                            EM: 'Cập nhật mật khẩu thành công!'
+                        })
+                    } else {
+                        resolve({
+                            EC: -1,
+                            EM: 'Lỗi hệ thống!'
+                        })
+                    }
+                } else {
+                    resolve({
+                        EC: -1,
+                        EM: "Không tìm thấy người dùng!"
+                    })
+                }
+            } else {
+                resolve({
+                    EC: -1,
+                    EM: 'Missing parameter data!'
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    });
+}
+
 let handleLoginService = (email, password) => {
 
     return new Promise(async (resolve, reject) => {
@@ -141,15 +184,55 @@ let handleLoginService = (email, password) => {
 
     });
 };
-let compareUserPassword = (password) => {
-    return new Promise((resolve, reject) => {
+let handleRegisterUserService = (data) => {
+    return new Promise(async (resolve, reject) => {
 
         try {
+            if (data) {
 
+                let hashPassword = await handleHashPassword(data.password)
+                let finUser = await db.User.findOne({
+
+                    where: { email: data.email },
+
+                })
+                if (finUser) {
+                    resolve({
+                        EC: -1,
+                        EM: 'Người dùng đã tồn tại trong hệ thống!',
+                    })
+                } else {
+                    let user = await db.User.create({
+                        firstName: data.firstName,
+                        lastName: data.lastName,
+                        email: data.email,
+                        password: hashPassword,
+                        address: data.address,
+                        phoneNumber: data.phone,
+                        roleId: 'R3'
+                    });
+                    if (user) {
+                        resolve({
+                            EC: 0,
+                            EM: 'Đăng kí tài khoản thành công !',
+                        });
+                    } else {
+                        resolve({
+                            EC: -1,
+                            EM: 'Lỗi hệ thống!',
+                        });
+                    }
+                }
+            } else {
+                resolve({
+                    EC: -1,
+                    EM: 'Thiếu dữ liệu!',
+                });
+            }
         } catch (error) {
-            reject(error)
+            reject(error);
         }
-    })
+    });
 }
 //crud user 
 let handleCreateUserService = (data) => {
@@ -262,10 +345,11 @@ let handleGetAllUserService = () => {
             });
             if (res && res.length > 0) {
                 res.map(item => {
-                    item.image = new Buffer.from(item.image, 'base64').toString('binary')
+                    if (item.image) {
+                        item.image = Buffer.from(item.image, 'base64').toString('binary');
+                    }
                     return item;
-
-                })
+                });
             }
             if (res) {
                 resolve({
@@ -343,5 +427,6 @@ module.exports = {
     connectDbTest, handleLoginService,
     handleCreateUserService, handleGetAllUserService,
     handleDeleteUserService, handleGetAllCodeServices,
-    handleUpdateUserService
+    handleUpdateUserService, handleRegisterUserService,
+    handleCheckEmail, handleResetPasswordService
 }

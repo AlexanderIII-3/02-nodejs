@@ -72,7 +72,26 @@ let handleGetAllUsers = async (req, res) => {
     }
 
 };
+let handleVerifyEmail = async (req, res) => {
 
+    try {
+        let email = req.query.email;
+        if (!email) {
+            return res.status(404).json({
+                EM: 'Missing parameter',
+                EC: -1
+            })
+        }
+        let data = await userService.handleCheckEmail(email);
+        return res.status(200).json(data);
+    } catch (error) {
+        console.log(error);
+        return res.status(404).json({
+            EM: 'Error from server',
+            EC: -1
+        })
+    }
+}
 let handleUpdateUser = async (req, res) => {
 
     try {
@@ -82,6 +101,19 @@ let handleUpdateUser = async (req, res) => {
         )
     } catch (error) {
         console.log(error)
+    }
+}
+let handleResetPassword = async (req, res) => {
+    try {
+
+        let data = await userService.handleResetPasswordService(req.body);
+        return res.status(200).json(data);
+    } catch (error) {
+        console.log(error);
+        return res.status(404).json({
+            EM: 'Error from server',
+            EC: -1
+        })
     }
 }
 let handleDeleteUser = async (req, res) => {
@@ -137,10 +169,30 @@ let handleGetAllCode = async (req, res) => {
     }
 };
 
+let handleRegisterUser = async (req, res) => {
+    try {
+        let data = req.body;
+        if (!data.email || !data.password || !data.firstName || !data.lastName || !data.address) {
+            return res.status(404).json({
+                EC: -1,
+                EM: "Missing parameters"
+            })
+        }
+        else {
+            let user = await userService.handleRegisterUserService(data)
+            return res.status(200).json(
+                user
+            )
+        }
+    } catch (error) {
+        console.log(error)
+    }
+};
 module.exports = {
     handleRes, handleLogin,
     handleCreateUser, handleGetAllUsers,
     handleDeleteUser, handleGetAllCode,
-    handleUpdateUser
+    handleUpdateUser, handleRegisterUser,
+    handleVerifyEmail, handleResetPassword
 
 }

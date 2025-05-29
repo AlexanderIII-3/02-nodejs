@@ -571,7 +571,18 @@ let getListPatientForDoctorService = (doctorId, date) => {
                             model: db.Allcode, as: 'timeBookingData', attributes: ['valueEn', 'valueVi'],
 
                         },
-                        { model: db.Doctor_Infor, as: 'doctorInforData', attributes: ['doctorId', 'nameClinic', 'addressClinic'] },
+                        {
+                            model: db.Doctor_Infor,
+                            as: 'doctorInforData',
+                            attributes: ['doctorId', 'nameClinic', 'addressClinic'],
+                            include: [
+                                {
+                                    model: db.Clinic,
+                                    as: 'clinicData',
+                                    attributes: ['name', 'address']
+                                }
+                            ]
+                        }
                     ],
                     raw: false,
                     nest: true
@@ -592,6 +603,15 @@ let getListPatientForDoctorService = (doctorId, date) => {
         }
     })
 };
+function convertTimestampToDateString(timestamp) {
+    const ts = Number(+timestamp);
+    if (isNaN(ts)) return '';
+    const date = new Date(ts);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+}
 let sendingRemedyService = (dataInput) => {
 
     return new Promise(async (resolve, reject) => {
@@ -609,6 +629,9 @@ let sendingRemedyService = (dataInput) => {
 
             }
             else {
+
+                let dateBooking = convertTimestampToDateString(dataInput.date);
+
                 const filePath = path.join(__dirname, '../temp/KetQuaKham.pdf');
                 if (!filePath) {
                     return res.status(200).json({
@@ -632,6 +655,8 @@ let sendingRemedyService = (dataInput) => {
                 }
                 const dataSend = {
                     email: dataInput.email,
+                    doctorName: dataInput.doctorname,
+                    date: dateBooking,
                     pdf: pdf,
                     patientName: dataInput.patientName,
                 };

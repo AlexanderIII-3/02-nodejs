@@ -586,11 +586,52 @@ let getAllProvincesService = () => {
         }
     })
 }
+
+let getBasicInfoByPatientIdService = (patientId, actor) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!patientId || !actor) {
+                resolve({
+                    EC: 1,
+                    EM: "Missing required parameter!"
+                })
+            } else {
+                let data = await db.Health.findOne({
+                    where: {
+                        patientId: patientId,
+                        actor: actor
+                    },
+                    attributes: {
+                        exclude: ["createdAt", 'updatedAt'],
+                    },
+                    raw: true
+                })
+                if (data) {
+                    resolve({
+                        EC: 0,
+                        EM: "oke",
+                        DT: data
+                    })
+                } else {
+                    resolve({
+                        EC: 2,
+                        EM: "No health information found for this patient."
+                    })
+                }
+            }
+
+        } catch (error) {
+            console.error('Error in getBasicInfoByPatientIdService:', error);
+            reject(error);
+        }
+
+    })
+}
 module.exports = {
     postBookingAppointmentService,
     getConfirmBookingService, postVerifyBookingAppointmentService,
     getHistoryPatientService, getHistoryPatientByEmailService,
     postInforPatientService, getHealthPatientByIdService,
     getListBookingByPatientIdService, cancelBookingAppointmentService,
-    getAllProvincesService
+    getAllProvincesService, getBasicInfoByPatientIdService
 }

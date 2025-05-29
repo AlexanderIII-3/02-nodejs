@@ -28,7 +28,7 @@ let getBodyHTMLEmail = (dataSend) => {
 
     result = `
     <h3>Xin Chào  ${dataSend.patientName}!</h3>
-    <p>Nếu bạn nhận được email này sau khi bạn đặt lịch hẹn với bác sĩ! Trên trang web AlexSanDer đẹp trai  </p>
+    <p>Nếu bạn nhận được email này sau khi bạn đặt lịch hẹn với bác sĩ! Trên trang đặt lịch BookingCare của chúng tôi  </p>
     <p>Thông Tin:</p>
     <div><b>Thời Gian: ${dataSend.time}</b></div>
      Nếu những thông tin này chính xác, vui lòng xác nhận và hoàn tất cuộc hẹn khám bệnh của bạn với bác sĩ.</p>
@@ -77,18 +77,33 @@ let sendEmail = async (dataSend) => {
     });
 };
 let getBodyHTMLEmailRemedy = (data) => {
-    let result = '';
-
-    result = `
-    <h3>Xin Chào  ${data.patientName} !</h3>
-    <p>Nếu bạn nhận được email này sau khi bạn đặt lịch hẹn với bác sĩ! Trên trang web AlexSanDer đẹp trai  </p>
-    <p>Thông tin đơn thuốc đã được gửi trong file đính kèm</p>
-   
-    <div>Xin Chân Thành Cảm Ơn!</div>
-    
-    `
-
-    return result;
+    return `
+        <div style="font-family: Arial, sans-serif; color: #333; font-size: 16px;">
+            <h2 style="color: #2d8cf0;">Kính gửi ${data.patientName},</h2>
+            <p>
+                Cảm ơn bạn đã tin tưởng và sử dụng dịch vụ của chúng tôi.<br>
+                Đây là kết quả khám bệnh của bạn tại cơ sở y tế:
+            </p>
+            <ul>
+                <li><strong>Họ tên bệnh nhân:</strong> ${data.patientName}</li>
+                <li><strong>Email:</strong> ${data.email || ''}</li>
+                <li><strong>Ngày khám:</strong> ${data.date || ''}</li>
+                <li><strong>Bác sĩ phụ trách:</strong> ${data.doctorName || ''}</li>
+            </ul>
+            <p>
+                <strong>Kết quả khám và đơn thuốc:</strong> đã được gửi kèm trong file đính kèm email này.<br>
+                Nếu có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng tôi để được hỗ trợ.
+            </p>
+            <p style="margin-top: 32px;">
+                Trân trọng,<br>
+                <b>Phòng khám BookingCare</b>
+            </p>
+            <hr>
+            <div style="font-size: 13px; color: #888;">
+                Đây là email tự động, vui lòng không trả lời email này.
+            </div>
+        </div>
+    `;
 }
 
 

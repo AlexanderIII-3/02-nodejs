@@ -163,12 +163,25 @@ let getAllProvinces = async (req, res) => {
 
     }
 }
+let getBasicInfoByPatientId = async (req, res) => {
+    try {
+        let data = await patientService.getBasicInfoByPatientIdService(req.query.patientId, req.query.actor)
+        return res.status(200).json(data);
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            EC: -1,
+            EM: "Error from Server!"
+        });
+
+    }
+}
 module.exports = {
     postBookingAppointment,
     getConfirmBooking, postVerifyBookingAppointment,
     getHistoryPatient, postGeneralPDF,
     getHistoryPatientByEmail, postInforPatient,
     getHealthPatientById, getListBookingByPatientId,
-    cancelBookingAppointment, getAllProvinces
+    cancelBookingAppointment, getAllProvinces, getBasicInfoByPatientId
 
 }
